@@ -22,6 +22,7 @@ export class MoveItemsState<E extends CanvasEngine = CanvasEngine> extends Abstr
 			new Action({
 				type: InputType.MOUSE_DOWN,
 				fire: (event: ActionEvent<React.MouseEvent>) => {
+					console.log('MOUSE_DOWN', event);
 					const element = this.engine.getActionEventBus().getModelForEvent(event);
 					if (!element) {
 						return;
@@ -31,6 +32,23 @@ export class MoveItemsState<E extends CanvasEngine = CanvasEngine> extends Abstr
 					}
 					element.setSelected(true);
 					this.engine.repaintCanvas();
+				}
+			})
+		);
+		/**
+		 * Add support of nodeMoved event that fired on end of dragging,
+		 *	 instead of default behaviour, when node move event triggers on every mouse move
+		 */
+		this.registerAction(
+			new Action({
+				type: InputType.MOUSE_UP,
+				fire: (event: ActionEvent<React.MouseEvent>) => {
+					console.log('MOUSE_UP', event);
+					const element = this.engine.getActionEventBus().getModelForEvent(event);
+					if (!element) {
+						return;
+					}
+					this.engine.getModel().fireEvent({ node: element }, 'nodeMoved');
 				}
 			})
 		);
